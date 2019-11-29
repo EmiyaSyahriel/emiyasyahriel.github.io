@@ -1,0 +1,214 @@
+<HTML>
+<HEAD>
+<STYLE>
+html{background:#323232;position:absolute;font-family: sans-serif}
+#canvasWithBackground{position:absolute;top:0px;left:0px;right:0px;bottom:0px;margin:auto;width:512px;height:512px}
+#canvasWithBackground>canvas{position:absolute;top:0px;left:0px}
+button, .button{
+	border:solid 3px transparent;
+	background:rgba(0,0,0,0.3);
+	color:#fff;
+	padding:10px;
+}
+#ID_Res input{width:50px}
+button:hover, .button:hover{
+	border:solid 3px #09f;
+}
+
+input:focus + label * , button:focus + label * {
+	outline: solid 3px #09f;
+}
+
+#ID_Base, #ID_Alpha, #ID_AO {display:none;}
+
+#sidebar{
+text-align:center;
+	width: 300px;
+	height: 100%;
+	position: fixed;
+	top:0px;left:-270px;bottom:0px;
+	z-index:1;
+	background:rgba(255,255,255,1);
+	transition: all linear .25s;
+}
+
+#sidebar:hover{
+	left:0px;
+	background:rgba(255,255,255,0.2);
+}
+
+#workspace{
+	position:fixed;
+	top:0px;left:0px;bottom:0px;
+	right:0px;
+	overflow:scroll;
+}
+</STYLE>
+</HEAD>
+<BODY>
+<DIV id="sidebar">
+<H4>Base (Mandatory):</H4>
+<INPUT type=file accept="image/*" id="ID_Base" onchange="document.getElementById('ID_Base_Preview').src = window.URL.createObjectURL(this.files[0])"/>
+<LABEL for="ID_Base"><BUTTON onclick="gid('ID_Base').click()">Choose file</BUTTON></LABEL><BUTTON onclick="ClearSrc('ID_Base_Preview')">Clear</BUTTON>
+<br/>
+<IMG id="ID_Base_Preview" width=128 height=128 /><br/>
+<H4>Alpha Map (BW/A) (Mandatory) :</H4>
+<INPUT type=file accept="*.*" id="ID_Alpha" onchange="document.getElementById('ID_Alpha_Preview').src = window.URL.createObjectURL(this.files[0])"/>
+<LABEL for="ID_Alpha"><BUTTON onclick="gid('ID_Alpha').click()">Choose file</BUTTON></LABEL><BUTTON onclick="ClearSrc('ID_Alpha_Preview')">Clear</BUTTON>
+<br/>
+<SPAN><INPUT type="checkbox" id="ID_Alpha_Copy"/><LABEL for="ID_Alpha_Copy">Use Alpha Channel</LABEL></SPAN>
+<br/>
+<IMG id="ID_Alpha_Preview" width=128 height=128 /><br/>
+<H4>AO Map (BW) (Additional) :</H4>
+<INPUT type=file accept="*.*" id="ID_AO" onchange="document.getElementById('ID_AO_Preview').src = window.URL.createObjectURL(this.files[0])"/>
+<LABEL for="ID_AO"><BUTTON onclick="gid('ID_AO').click()">Choose file</BUTTON></LABEL><BUTTON onclick="ClearSrc('ID_AO_Preview')">Clear</BUTTON>
+<br/>
+<SELECT id="ID_AO_Mode">
+<OPTION value="0" default>Multiply</OPTION>
+<OPTION value="1">Additive</OPTION>
+<OPTION value="2">Intensity</OPTION>
+</SELECT>
+<br/>
+<IMG id="ID_AO_Preview" width=128 height=128 /><br/>
+<H4>Resolution</H4>
+<DIV id="ID_Res">
+<INPUT type="number" value=512 onchange="refreshResolution()" id="ID_Res_X"/> x <INPUT type="number" value=512 onchange="refreshResolution()" id="ID_Res_Y"/>
+</DIV>
+<BUTTON onclick="AlphaBaker()">BAKE</BUTTON><br/>
+<SPAN id="ID_Status">Ready</SPAN>
+</DIV>
+<DIV id="workspace">
+<DIV id="canvasWithBackground">
+<CANVAS width=512 height=512 id="ID_Background"></CANVAS>
+<CANVAS width=512 height=512 id="ID_Canvas"></CANVAS>
+</DIV>
+</DIV>
+<SCRIPT>
+
+function gid(x){
+return document.getElementById(x);}
+
+var aoMode = 0;
+var resolution = createVector2(512, 512);
+
+function refreshResolution(){
+	gid("ID_Status").innerHTML = "Resizing...";
+	resolution.x = parseInt(gid("ID_Res_X").value);
+	resolution.y = parseInt(gid("ID_Res_Y").value);
+	gid("ID_Background").width = resolution.x;
+	gid("ID_Background").height = resolution.y;
+	gid("ID_Canvas").width = resolution.x;
+	gid("ID_Canvas").height = resolution.y;
+	gid("canvasWithBackground").style.width = resolution.x;
+	gid("canvasWithBackground").style.height = resolution.y;
+	drawBackground();
+	gid("ID_Status").innerHTML = "Ready";
+}
+
+function ClearSrc(id){
+	gid(id).removeAttribute("src");
+}
+
+function AlphaBaker(){
+	gid("ID_Status").innerHTML = "Baking...";
+	var baseContext =  (new OffscreenCanvas(resolution.x, resolution.y)).getContext('2d');
+	var alphaContext = (new OffscreenCanvas(resolution.x, resolution.y)).getContext('2d');
+	var aoContext = (new OffscreenCanvas(resolution.x, resolution.y)).getContext('2d');
+	var mainContext = gid("ID_Canvas").getContext('2d');
+	aoMode = parseInt(gid("ID_AO_Mode").options[gid("ID_AO_Mode").selectedIndex].value);
+
+	baseContext.drawImage(gid("ID_Base_Preview"), 0, 0, resolution.x, resolution.y);
+	baseContext.globalCompositeOperation = aoMode == 0 ? "multiply" : "lighter";
+	baseContext.drawImage(gid("ID_AO_Preview"), 0, 0, resolution.x, resolution.y);
+	baseContext.globalCompositeOperation = "source-over";
+	alphaContext.drawImage(gid("ID_Alpha_Preview"), 0, 0, resolution.x, resolution.y);
+
+	var basePixelData = baseContext.getImageData(0,0,resolution.x, resolution.y).data;
+	var alphaPixelData = alphaContext.getImageData(0,0,resolution.x, resolution.y).data;
+	var aoPixelData = aoContext.getImageData(0,0,resolution.x, resolution.y).data;
+	//basePixelData = combineAO(basePixelData, aoPixelData);
+	var combinedImageData = combineRGBA(basePixelData, alphaPixelData);
+	mainContext.putImageData(combinedImageData, 0, 0);
+	gid("ID_Status").innerHTML = "Ready";
+}
+
+function GetAOMode(){
+	return gid("ID_AO_Additive").checked ? "lighter" : "multiply";
+}
+
+function combineAO(base, ao){
+	var aod = new ImageData(resolution.x, resolution.y);
+	for(i = 0; i < base.Length; i+=4){
+		var appliedAO = ApplyColorAO([base[i],base[i+1],base[i+2]], [ao[i],ao[i+1],ao[i+2]])
+		aod.data[i]   = appliedAO.r;
+		aod.data[i+1] = appliedAO.g;
+		aod.data[i+2] = appliedAO.b;
+		aod.data[i+3] = base[i+3];
+	}
+	return aod;
+}
+
+function createVector2(x,y){
+	return {"x":x,"y":y}
+}
+
+function ApplyColorAO(color, ao){
+	var retval = {r:0,g:0,b:0};
+	var gs = average(ao[0],ao[1],ao[2]);
+	switch(aoMode){
+		case 0:
+			retval.r = color[0] * gs;
+			retval.g = color[1] * gs;
+			retval.b = color[2] * gs;
+		break;
+		case 1:
+			retval.r = color[0] + gs;
+			retval.g = color[1] + gs;
+			retval.b = color[2] + gs;
+		break;
+		case 2:
+			retval.r = color[0] * (color[0] / gs);
+			retval.g = color[1] * (color[1] / gs);
+			retval.b = color[2] * (color[2] / gs);
+		break;
+	}
+	
+	return retval;
+}
+
+function combineRGBA(base, alpha){
+	var isCopy = gid("ID_Alpha_Copy").checked;
+	var rgba = new ImageData(resolution.x, resolution.y);
+	for(i = 0; i < base.length; i+=4){
+		rgba.data[i] = base[i];
+		rgba.data[i+1] = base[i+1];
+		rgba.data[i+2] = base[i+2];
+		rgba.data[i+3] = isCopy ? alpha[i+3] : average(alpha[i], alpha[i+1], alpha[i+2]);
+	}
+
+	return rgba;
+}
+
+function average(r,g,b){
+	return Math.round(r+g+b/3);
+}
+
+function drawBackground(){
+	var ctx = gid("ID_Background").getContext('2d');
+	var evenRow = false;
+	var resX = resolution.x / 10, resY = resolution.y/10
+	for(x = 0; x < resX; x++){
+		evenRow = (x%2!=0);
+		for(y = 0; y < resY; y++){
+			ctx.fillStyle = evenRow? "gray" : "white";
+			ctx.fillRect(x * 10, y * 10, 10, 10);
+			evenRow = !evenRow;
+		}
+	}
+}
+
+document.addEventListener("DOMContentLoaded", drawBackground)
+
+</SCRIPT>
+</BODY>
+</HTML>
