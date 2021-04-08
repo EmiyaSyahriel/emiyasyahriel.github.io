@@ -9,7 +9,7 @@ var l = document.location.href.split("?");
 var res = [1024,1024];
 var maxRad = 1.5;
 var count = 512;
-
+var R = true, G = true, B = true, W= true;
 if(l.length > 1){
 	var cmds = l[1].split(",");
 	for(i =0; i < cmds.length; i++){
@@ -20,6 +20,12 @@ if(l.length > 1){
 				case "h": res[1] = parseInt(format[1]);break;
 				case "count": count = parseInt(format[1]);break;
 				case "rad": maxRad = parseFloat(format[1]);break;
+				case "colors": 
+					R = format[1].indexOf("R") >= 0;
+					G = format[1].indexOf("G") >= 0;
+					B = format[1].indexOf("B") >= 0;
+					W = format[1].indexOf("W") >= 0;
+				;break;
 			}
 		}
 	}
@@ -33,6 +39,7 @@ var ctx = canvas.getContext("2d")
 var rCirc = new Path2D();
 var gCirc = new Path2D();
 var bCirc = new Path2D();
+var wCirc = new Path2D();
 
 
 function fill(path){
@@ -48,16 +55,19 @@ function fill(path){
 fill(rCirc);
 fill(gCirc);
 fill(bCirc);
+fill(wCirc);
 
 rCirc.closePath();
 gCirc.closePath();
 bCirc.closePath();
+wCirc.closePath();
 
 ctx.fillStyle = "black"; ctx.fillRect(0,0,canvas.width, canvas.height);
 ctx.globalCompositeOperation = "lighter";
-ctx.fillStyle = "red"; ctx.fill(rCirc);
-ctx.fillStyle = "green"; ctx.fill(gCirc);
-ctx.fillStyle = "blue"; ctx.fill(bCirc);
+if(R) { ctx.fillStyle = "red"; ctx.fill(rCirc); }
+if(G) {ctx.fillStyle = "green"; ctx.fill(gCirc); }
+if(B) {ctx.fillStyle = "blue"; ctx.fill(bCirc); }
+if(W) {ctx.fillStyle = "white"; ctx.fill(wCirc); }
 </SCRIPT>
 </BODY>
 </HTML>
