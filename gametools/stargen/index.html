@@ -1,0 +1,63 @@
+<HTML>
+<HEAD>
+   <TITLE> Star Texture Generator </TITLE>
+</HEAD>
+<BODY>
+<CANVAS id="canvas" width=1024 height=1024></CANVAS>
+<SCRIPT>
+var l = document.location.href.split("?");
+var res = [1024,1024];
+var maxRad = 1.5;
+var count = 512;
+
+if(l.length > 1){
+	var cmds = l[1].split(",");
+	for(i =0; i < cmds.length; i++){
+		var format = cmds[i].split("=", 2)
+		if(format.length>1){
+			switch(format[0]){
+				case "w": res[0] = parseInt(format[1]);break;
+				case "h": res[1] = parseInt(format[1]);break;
+				case "count": count = parseInt(format[1]);break;
+				case "rad": maxRad = parseFloat(format[1]);break;
+			}
+		}
+	}
+}
+
+var canvas = document.getElementById("canvas");
+canvas.width = res[0];
+canvas.height = res[1];
+var ctx = canvas.getContext("2d")
+
+var rCirc = new Path2D();
+var gCirc = new Path2D();
+var bCirc = new Path2D();
+
+
+function fill(path){
+	for(var i = 0; i < count; i++){
+		var x = Math.random() * canvas.width;
+		var y = Math.random() * canvas.height;
+		var rad = Math.random() * maxRad;
+		path.arc(x, y, rad, 0, 2* Math.PI, false);
+		path.closePath();
+	}
+}
+
+fill(rCirc);
+fill(gCirc);
+fill(bCirc);
+
+rCirc.closePath();
+gCirc.closePath();
+bCirc.closePath();
+
+ctx.fillStyle = "black"; ctx.fillRect(0,0,canvas.width, canvas.height);
+ctx.globalCompositeOperation = "lighter";
+ctx.fillStyle = "red"; ctx.fill(rCirc);
+ctx.fillStyle = "green"; ctx.fill(gCirc);
+ctx.fillStyle = "blue"; ctx.fill(bCirc);
+</SCRIPT>
+</BODY>
+</HTML>
