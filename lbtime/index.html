@@ -61,7 +61,7 @@
         var gs = ls;
         gid("utc_time").innerHTML = clock_fmt(gh,gm,gs);
         if(has_location){
-          var lto = Math.floor((longitude / 180.0) * 43.200);
+          var lto = Math.floor((longitude / 180.0) * 43200);
           var ah = gh + Math.floor(lto / 3600);
           var am = gm + (Math.floor(lto / 60) % 60);
           var as = gs + (lto % 60);
