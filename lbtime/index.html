@@ -105,21 +105,15 @@
           
           // diffs
           {
-            var ltm = ltf - gto;
-            var ltg = ltf;
-            var ltmn = ltm < 0;
-            var ltgn = ltm < 0;
-            ltm = Math.abs(ltm);
-            ltg = Math.abs(ltg);
-            var ltmh = Math.floor(ltm / 3600) % 24;
-            var ltmm = Math.floor(ltm / 60) % 60;
-            var ltms = Math.floor(ltm % 60);
-            var ltgh = Math.floor(ltg / 3600) % 24;
-            var ltgm = Math.floor(ltg / 60) % 60;
-            var ltgs = Math.floor(ltg % 60);
+            var ltmh = Math.abs(lh - ah);
+            var ltmm = Math.abs(lm - am);
+            var ltms = Math.abs(ls - as);
+            var ltgh = Math.abs(gh - ah);
+            var ltgm = Math.abs(gm - am);
+            var ltgs = Math.abs(gs - as);
             
-            gid("utc_diff").innerHTML = clock_fmt(ltgh,ltgm,ltgs) +" "+ (ltmn ? "earlier" : "later");
-            gid("local_diff").innerHTML = clock_fmt(ltmh,ltmm,ltms) +" "+ (ltmn ? "earlier" : "later");
+            gid("utc_diff").innerHTML = clock_fmt(ltgh,ltgm,ltgs);
+            gid("local_diff").innerHTML = clock_fmt(ltmh,ltmm,ltms);
           }
         }else{
           gid("locate_time").innerHTML = "No Location Yet";
