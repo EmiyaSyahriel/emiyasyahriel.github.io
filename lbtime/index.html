@@ -51,6 +51,17 @@
         return z0(h)+":"+z0(m)+":"+z0(s);
       }
       
+      function day_diff(a){
+        switch(a){
+          case -2: return "(2 days ago)";
+          case -1: return "(Yesterday)";
+          case 0 : return "";
+          case 1: return "(Tomorrow)";
+          case 2: return "(Next 2 days)";
+          default: return "(Woah!!)";
+        }
+      }
+      
       function clock_update(){
         var d = new Date();
         var lh = d.getHours();
@@ -60,19 +71,26 @@
         
         gid("local_time").innerHTML = clock_fmt(lh,lm,ls);
         
+        var day_off = 0;
         var gto = bto + (time_offset * 60);
+        if(gto < 0) { 
+          gto = 86400 - gto;
+          day_off--;
+        }
         var gh = Math.floor(gto / 3600) % 24;
         var gm = Math.floor(gto / 60) % 60;
         var gs = gto % 60;
-        gid("utc_time").innerHTML = clock_fmt(gh,gm,gs);
+        gid("utc_time").innerHTML = clock_fmt(gh,gm,gs) +" "+ day_diff(day_off);
         if(has_location){
           var lto = gto + Math.floor((longitude / 180.0) * 43200);
           var ah = Math.floor(lto / 3600);
-          var nd = ah > 24;
+          if(ah > 24){
+            day_off++;
+          }
           ah = ah % 24;
-          var am = Math.floor(gto / 60) % 60;
+          var am = Math.floor(lto / 60) % 60;
           var as = lto % 60;
-          gid("locate_time").innerHTML = clock_fmt(ah,am,as) + (nd ? "(Next Day)" : "");
+          gid("locate_time").innerHTML = clock_fmt(ah,am,as) +" "+ day_diff(day_off);
         }else{
           gid("locate_time").innerHTML = "No Location Yet";
         }
