@@ -56,16 +56,24 @@
         var lm = d.getMinutes();
         var ls = d.getSeconds();
         gid("local_time").innerHTML = clock_fmt(lh,lm,ls);
-        var gh = lh + Math.floor(time_offset / 60);
-        var gm = lm + (time_offset % 60);
+        var gh = (lh + Math.floor(time_offset / 60)) % 24;
+        if(gh < 0) gh = 24 + gh;
+        var gm = (lm + time_offset) % 60;
+        if(gm < 0) gm = 60 + gm;
         var gs = ls;
+        if(gs < 0) gs = 60 + gs;
         gid("utc_time").innerHTML = clock_fmt(gh,gm,gs);
         if(has_location){
           var lto = Math.floor((longitude / 180.0) * 43200);
           var ah = gh + Math.floor(lto / 3600);
-          var am = gm + (Math.floor(lto / 60) % 60);
-          var as = gs + (lto % 60);
-          gid("locate_time").innerHTML = clock_fmt(ah,am,as);
+          if(ah < 0) ah = 24 - ah;
+          var nd = ah > 24;
+          ah = ah % 24;
+          var am = (gm + Math.floor(lto / 60)) % 60;
+          if(am < 0) am = 24 - am;
+          var as = (gs + lto) % 60;
+          if(as < 0) as = 24 - as;
+          gid("locate_time").innerHTML = clock_fmt(ah,am,as) + (nd ? "(Next Day)" : "");
         }else{
           gid("locate_time").innerHTML = "No Location Yet";
         }
