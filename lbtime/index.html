@@ -38,7 +38,7 @@
       <br/>
       Or you can put your location (longitude) on your own to the given input box if you insecure about your real location.
       <br/>
-      Made with 🧠 by <a href="https://github.com/EmiyaSyahriel">EmiyaSyahriel</a> in Western Indonesian Time, powered by <a href="https://pages.github.com/">Github Pages.</a>
+      Made with (a partially working) 🧠 by <a href="https://github.com/EmiyaSyahriel">EmiyaSyahriel</a> in Western Indonesian Time, powered by <a href="https://pages.github.com/">Github Pages.</a>
     </div>
     <script>
       var has_location = false;
@@ -56,24 +56,22 @@
         var lh = d.getHours();
         var lm = d.getMinutes();
         var ls = d.getSeconds();
+        var bto = (lh * 3600) + (lm * 60) + ls;
+        
         gid("local_time").innerHTML = clock_fmt(lh,lm,ls);
-        var gh = (lh + Math.floor(time_offset / 60)) % 24;
-        if(gh < 0) gh = 24 + gh;
-        var gm = (lm + time_offset) % 60;
-        if(gm < 0) gm = 60 + gm;
-        var gs = ls;
-        if(gs < 0) gs = 60 + gs;
+        
+        var gto = bto + (time_offset * 60);
+        var gh = Math.floor(gto / 3600) % 24;
+        var gm = Math.floor(gto / 60) % 60;
+        var gs = gto % 60;
         gid("utc_time").innerHTML = clock_fmt(gh,gm,gs);
         if(has_location){
-          var lto = Math.floor((longitude / 180.0) * 43200);
-          var ah = gh + Math.floor(lto / 3600);
-          if(ah < 0) ah = 24 - ah;
+          var lto = gto + Math.floor((longitude / 180.0) * 43200);
+          var ah = Math.floor(lto / 3600);
           var nd = ah > 24;
           ah = ah % 24;
-          var am = (gm + Math.floor(lto / 60)) % 60;
-          if(am < 0) am = 24 - am;
-          var as = (gs + lto) % 60;
-          if(as < 0) as = 24 - as;
+          var am = Math.floor(gto / 60) % 60;
+          var as = lto % 60;
           gid("locate_time").innerHTML = clock_fmt(ah,am,as) + (nd ? "(Next Day)" : "");
         }else{
           gid("locate_time").innerHTML = "No Location Yet";
