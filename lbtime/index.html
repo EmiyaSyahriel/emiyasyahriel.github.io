@@ -18,6 +18,12 @@
       <h2 id="utc_time">00:00:00</h2>
       <h4>Location Time</h4>
       <h2 id="locate_time">Please put Location</h2>
+      <hr/>
+      <h3>Difference</h3>
+      <h4>To Local Machine Time</h4>
+      <h2 id="local_diff"></h2>
+      <h4>To Greenwich</h4>
+      <h2 id="utc_diff"></h2>
     </div>
     <div id="uses">
       <h3>Using Location API</h3>
@@ -25,7 +31,7 @@
       <br/>
       <h3>By User Input</h3>
       <input type="number" id="number_input" placeholder="Longitude" max="180" min="-180"/>
-      <button onclick="use_self_input()">Get Location</button>
+      <button onclick="use_self_input()">Set Location</button>
     </div>
     <div id="advice">
       This page uses your machine local time, your machine time zone offset and your location (can be by Geolocation API or by your own input) to GMT and 
@@ -81,18 +87,44 @@
         var gm = Math.floor(gto / 60) % 60;
         var gs = gto % 60;
         gid("utc_time").innerHTML = clock_fmt(gh,gm,gs) +" "+ day_diff(day_off);
+        
         if(has_location){
-          var lto = gto + Math.floor((longitude / 180.0) * 43200);
+          var ltf = Math.floor((longitude / 180.0) * 43200);
+          var lto = gto + ltf;
           var ah = Math.floor(lto / 3600);
           if(ah > 24){
             day_off++;
+          }else if(ah < 0){
+            day_off--;
+            ah = 24 - ah;
           }
           ah = ah % 24;
           var am = Math.floor(lto / 60) % 60;
           var as = lto % 60;
           gid("locate_time").innerHTML = clock_fmt(ah,am,as) +" "+ day_diff(day_off);
+          
+          // diffs
+          {
+            var ltm = ltf - bto;
+            var ltg = ltf;
+            var ltmn = ltm < 0;
+            var ltgn = ltm < 0;
+            ltm = Math.abs(ltm);
+            ltg = Math.abs(ltg);
+            var ltmh = Math.floor(ltm / 3600) % 24;
+            var ltmm = Math.floor(ltm / 60) % 60;
+            var ltms = Math.floor(ltm % 60);
+            var ltgh = Math.floor(ltg / 3600) % 24;
+            var ltgm = Math.floor(ltg / 60) % 60;
+            var ltgs = Math.floor(ltg % 60);
+            
+            gid("utc_diff").innerHTML = clock_fmt(ltgh,ltgm,ltgs) +" "+ (ltmn ? "earlier" : "later");
+            gid("local_diff").innerHTML = clock_fmt(ltmh,ltmm,ltms) +" "+ (ltmn ? "earlier" : "later");
+          }
         }else{
           gid("locate_time").innerHTML = "No Location Yet";
+          gid("utc_diff").innerHTML = "No Location Yet";
+          gid("local_diff").innerHTML = "No Location Yet";
         }
       }
       
