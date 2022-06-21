@@ -1,0 +1,108 @@
+<html>
+  <head>
+    <title> Location-based Non-Standard Time </title>
+    <style>
+      body { font-family: sans-serif; text-align:center;}
+      #uses, #advise { padding:10px; border-radius:10px; }
+      #uses { background: rgba(255,128,128,0.5);}
+      #advise { background: rgba(128,255,128,0.5);}
+    </style>
+  </head>
+  <body>
+    <h4>Local Time</h4>
+    <h2 id="local_time">00:00:00</h2>
+    <h4>Greenwich Calculated Time</h4>
+    <h2 id="utc_time">00:00:00</h2>
+    <h4>Location Time</h4>
+    <h2 id="locate_time">Please put Location</h2>
+    <div id="uses">
+      <h3>Using Location API</h3>
+      <button onclick="request_location()">Get Location</button>
+      <br/>
+      <h3>By User Input</h3>
+      <input type="number" id="number_input" placeholder="Longitude" max="180" min="-180"/>
+      <button onclick="use_self_input()">Get Location</button>
+    </div>
+    <div id="advice">
+      This page uses your machine local time, your machine time zone offset and your location (can be by Geolocation API or by your own input) to GMT and then use it to calculate more accurate time.
+    </div>
+    <script>
+      var has_location = false;
+      var longitude = 0;
+      var time_offset = 0;
+      const z0 = (x, count = 2) => x.toString().padStart('0', count);
+      const gid = (id) => document.getElementById(id);
+      
+      function clock_fmt(h, m, s){
+        return z0(h)+":"+z0(m)+":"+z0(s);
+      }
+      
+      function clock_update(){
+        var d = new Date();
+        var lh = d.getHours();
+        var lm = d.getMinutes();
+        var ls = d.getSeconds();
+        gid("local_time").innerHTML = clock_fmt(lh,lm,ls);
+        var gh = lh + Math.floor(time_offset / 60);
+        var gm = lm + (time_offset % 60);
+        var gs = ls;
+        gid("utc_time").innerHTML = clock_fmt(gh,gm,gs);
+        if(has_location){
+          var lto = Math.floor((longitude / 180.0) * 43.200);
+          var ah = gh + Math.floor(lto / 3600);
+          var am = gm + (Math.floor(lto / 60) % 60);
+          var as = gs + (lto % 60);
+          gid("locate_time").innerHTML = clock_fmt(ah,am,as);
+        }else{
+          gid("locate_time").innerHTML = "No Location Yet";
+        }
+      }
+      
+      function use_self_input(){
+        has_location = true;
+        var v = gid("number_input").value;
+        longitude = parseInt(v);
+      }
+      
+      function init(){
+        var d= new Date();
+        time_offset = d.getTimezoneOffset();
+      }
+      
+      function retrieve_position(pos){
+        has_location = true;
+        longitude = position.coords.longitude;
+        gid("number_input").value = longitude;
+      }
+      
+      function position_err(err){
+        switch(error.code) {
+          case error.PERMISSION_DENIED:
+            alert("Geolocation request denied.");
+            break;
+          case error.POSITION_UNAVAILABLE:
+            alert("Location information is unavailable.");
+            break;
+          case error.TIMEOUT:
+            alert("User or provider is too late to respond request.");
+            break;
+          case error.UNKNOWN_ERROR:
+            alert("An unknown error occurred.");
+          break;
+        }
+      }
+      
+      function request_location(){
+        if (navigator.geolocation) {
+          navigator.geolocation.getCurrentPosition(retrieve_position, position_err);
+        } else { 
+          alert("Browser didn't support Geolocation API");
+        }
+      }
+      
+      setInterval(clock_update, 500);
+      init();
+      
+    </script>
+  </body>
+</html>
