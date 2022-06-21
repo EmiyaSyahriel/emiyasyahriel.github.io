@@ -3,18 +3,21 @@
     <title> Location-based Non-Standard Time </title>
     <style>
       body { font-family: sans-serif; text-align:center;}
-      #uses, #advise { padding:10px; border-radius:10px; }
+      #app_main, #uses, #advice { padding:10px; border-radius:10px; margin:10px;}
+      #app_main { background: rgba(128,128,255,0.5);}
       #uses { background: rgba(255,128,128,0.5);}
-      #advise { background: rgba(128,255,128,0.5);}
+      #advice { background: rgba(128,255,128,0.5);}
     </style>
   </head>
   <body>
-    <h4>Local Time</h4>
-    <h2 id="local_time">00:00:00</h2>
-    <h4>Greenwich Calculated Time</h4>
-    <h2 id="utc_time">00:00:00</h2>
-    <h4>Location Time</h4>
-    <h2 id="locate_time">Please put Location</h2>
+    <div id="app_main">
+      <h4>Local Time</h4>
+      <h2 id="local_time">00:00:00</h2>
+      <h4>Greenwich Calculated Time</h4>
+      <h2 id="utc_time">00:00:00</h2>
+      <h4>Location Time</h4>
+      <h2 id="locate_time">Please put Location</h2>
+    </div>
     <div id="uses">
       <h3>Using Location API</h3>
       <button onclick="request_location()">Get Location</button>
@@ -71,7 +74,7 @@
       
       function retrieve_position(pos){
         has_location = true;
-        longitude = position.coords.longitude;
+        longitude = pos.coords.longitude;
         gid("number_input").value = longitude;
       }
       
