@@ -33,7 +33,7 @@ const add_view_item = (name, time, duration, err_type, reason) => {
 	let tx_errs = document.createElement("span");
 	
 	tx_name.textContent = name;
-	tx_time.textContent = `${time} (${duration}s long)`;
+	tx_time.textContent = `${time} (${duration}s)`;
 	tx_errs.textContent = reason;
 	
 	thumb.classList.add("ch_item_thumb");
@@ -79,7 +79,7 @@ const time_to_sec = (time_str) => {
 	for(let i = parts.length - 1; i >= 0; i--){
 		let s = parseInt(parts[i])
 		// More than or equal to 60 in minutes and seconds
-		if(mul <= 60 && s >= 60){
+		if(mul <= 61 && s >= 60){
 			throw new Error("Time format error - Time range");
 		}
 		
@@ -129,7 +129,11 @@ const parse = () => {
 			let o_time = time_to_sec(l_time);
 			chaps.push({name: l_name, fname: c_name, ttime: l_time, ntime: o_time, dur: 0, err: ERR_TYPE_NON, reason: "Fine"});
 		}catch(e){
-			chaps.push({name: l_name, fname: c_name, ttime: l_time, ntime: o_time, dur: 0, err: ERR_TYPE_ERR, reason: e.message});
+			let f_time = 10;
+			if(chaps.length > 0){
+				f_time = chaps[chaps.length - 1].ntime + 11;
+			}
+			chaps.push({name: l_name, fname: c_name, ttime: l_time, ntime: f_time, dur: 0, err: ERR_TYPE_ERR, reason: e.message});
 		}
 	}
 	
@@ -147,17 +151,25 @@ const parse = () => {
 	
 	// Check must greater than 10s
 	for(let chap of chaps){
-		if(chap.dur < 10){
+		if(chap.dur < 10 && chap.err == ERR_TYPE_NON){
 			chap.err = ERR_TYPE_ERR;
 			chap.reason = "Chapter less than 10 seconds";
 		}
 	}
 	
+	for(let chap of chaps){
+		if(chap.ntime > total_time && chap.err == ERR_TYPE_NON){
+			chap.err = ERR_TYPE_ERR;
+			chap.reason = "Chapter not in the video duration";
+		}
+	}
+	
+	
 	// Check must ascending
 	for(let i = 1; i < chaps.length; i++){
 		let pchap = chaps[i-1];
 		let nchap = chaps[i];
-		if(pchap.ntime > nchap.ntime){
+		if(pchap.ntime > nchap.ntime && chap.err == ERR_TYPE_NON){
 			nchap.err = ERR_TYPE_ERR;
 			nchap.reason = "Chapter is not properly ordered";
 		}
@@ -165,7 +177,7 @@ const parse = () => {
 	
 	// Warning if name longer than 100 char
 	for(let chap of chaps){
-		if(chap.name.length > 100){
+		if(chap.name.length > 100 && chap.err == ERR_TYPE_NON){
 			chap.err = ERR_TYPE_WRN;
 			chap.reason = "Chapter name longer than 100 characters";
 		}
@@ -188,7 +200,7 @@ const parse = () => {
 	// Check for more than 3 chapter
 	if(chaps.length <= 3){
 		chaps[chaps.length-1].err = ERR_TYPE_ERR;
-		chaps[chaps.length-1].reason = "Only found 3 valid chapters";
+		chaps[chaps.length-1].reason = "Only found less than 3 valid chapters";
 	}
 	
 	// Rendering part

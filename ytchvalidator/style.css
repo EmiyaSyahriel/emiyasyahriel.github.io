@@ -1,5 +1,5 @@
 body {
-	font-family : "Nokia Sans S40", "Nokia Sans", "Nokia Sans Wide", "Nokia Pure", sans-serif;
+	font-family : "Nokia Sans", "Nokia Sans S60", "Nokia Sans S40", "Roboto", "Noto", "Noto Sans", "Nokia Pure", sans-serif;
 	color: black;
 	background:#CCC;
 	--accent-bg: #94f;
@@ -117,21 +117,30 @@ footer>span{
 	height:100%;
 }
 
-#source_parse_btn {
-	background: #70f;
-	border: solid 2px #fff;
-	color:white;
-	font-size: 12pt;
+button {
+	background: transparent;
+	border: solid 1px #888;
+	color:black;
+	font-size: 14px;
 	padding: 5px 10px;
-	border-radius: 10px;
-	float:right;
+	border-radius: 3px;
+	margin-bottom: 3px;
+	font-weight: 900;
+	text-transform: uppercase;
+	cursor:pointer;
+	font-family : "Nokia Sans", "Nokia Sans S60", "Nokia Sans S40", "Roboto", "Noto", "Noto Sans", "Nokia Pure", sans-serif;
 }
 
-#source_parse_btn:hover {
-	background: #80f;
-	border: solid 2px #ccc;
-	border-radius: 10px;
-	color:#999;
+.dark_mode button{
+	color: white;
+}
+
+button:hover {
+	opacity: 0.8;
+}
+
+#source_parse_btn {
+	float:right;
 }
 
 #result_main {
@@ -238,19 +247,16 @@ footer>span{
 }
 
 #tab_chapter_close {
+	color:red;
 	display: none;
-	float: right;
-	background: #f00;
-	color: #fff;
-	font-size: 12pt;
-	border-radius: 10px;
-	border:solid 2px #fff;
+	position:absolute;
+	right:10px;
 }
 
 @media only screen and (max-width: 768px){
 	
 	#tab_chapter_close {
-		display: block;
+		display: unset;
 	}
 	
 	#content>div {
