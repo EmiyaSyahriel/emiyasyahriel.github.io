@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>YouTube Chapter Validator</title>
+<link rel="favicon" href="ic_launcher.ico" type="image/x-icon"/>
+<link rel="shortcut icon" href="ic_launcher.ico" type="image/x-icon"/>
+<link rel="stylesheet" href="style.css" type="text/css"/>
+<meta name="viewport" content="initial-scale=1">
+</head>
+<body>
+<header>
+	<span>YouTube Chapter Validator</span>
+</header>
+<div id="content">
+	<div id="source_container">
+		<details>
+			<summary>About YouTube Chapter Format</summary>
+			<ul>
+			<li>A single line with a valid time and name notation denotes a single chapter</li>
+			<li>First chapter must starts at 00:00</li>
+			<li>At least have 3 chapters</li>
+			<li>All is in ascending order (near to video start first)</li>
+			<li>Minimum length of a chapter is 10 seconds</li>
+			<li>There is a certain chapter name limit</li>
+			<li>The time notation must exactly at the start or at the end of line</li>
+			<li>Must use this format : <code>[hh:]mm:ss</code></li>
+			</ul>
+		</details>
+		<div>
+			<label for"source_total_duration">Total Video Duration</label>
+			<input type="text" id="source_total_duration" placeholder="00:00:00"/>
+			<button id="source_parse_btn">Validate</button>
+		</div>
+		<div id="source_container_1">
+			<textarea id="source_textarea" placeholder="Your description here"></textarea>
+		</div>
+	</div>
+	<div id="result_main" class="tab_hidden">
+		<div id="result_header">Chapters <button id="tab_chapter_close">Close</button></div>
+		<div id="result_ccontainer">
+		</div>
+	</div>
+</div>
+<footer>
+	<span>
+		Made with (partially working) &#x1F9E0; by EmiyaSyahriel at 2024 | <a href="https://github.com/EmiyaSyahriel/emiyasyahriel.github.io/ytchvalidator">Source Code</a>
+		<!-- Uuuh... Aku ra demen karo JavaScript, asu! -->
+	</span>
+</footer>
+<script src="chval.js"></script>
+</body>
+</html>

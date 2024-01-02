@@ -1,0 +1,272 @@
+body {
+	font-family : "Nokia Sans S40", "Nokia Sans", "Nokia Sans Wide", "Nokia Pure", sans-serif;
+	color: black;
+	background:#CCC;
+	--accent-bg: #94f;
+}
+
+.dark_mode {
+	color: white;
+	background: #333;
+	--accent-bg: #94f;
+}
+
+header {
+	position: fixed;
+	top:0px;
+	left:0px;
+	right:0px;
+	height:50px;
+	width:100%;
+	z-index:2;
+	background: var(--accent-bg);
+	box-shadow: 0px 5px 10px rgba(0,0,0,0.5);
+}
+
+.dark_mode header {
+	box-shadow: 0px -5px 10px rgba(0,0,0,0.2);
+}
+
+.dark_mode textarea, .dark_mode input {
+	background: #333;
+	color: #fff;
+	border: solid 1px #fff;
+	border-radius: 5px;
+}
+
+header>span {
+	position: absolute;
+	top:0px;
+	left:50px;
+	width:100%;
+	z-index:2;
+	padding:8px;
+	font-size: 16pt;
+}
+
+footer {
+	position: fixed;
+	bottom:0px;
+	left:0px;
+	right:0px;
+	height:50px;
+	z-index:2;
+	background: var(--accent-bg);
+	box-shadow: 0px -5px 10px rgba(0,0,0,0.5);
+}
+
+footer>span{
+	position: absolute;
+	top:0px;
+	left:50px;
+	width:100%;
+	z-index:2;
+	padding:8px;
+	text-align:center;
+}
+
+.dark_mode footer {
+	box-shadow: 0px -5px 10px rgba(0,0,0,0.2);
+}
+
+#content {
+	position: fixed;
+	top:60px;
+	bottom:60px;
+	left:10px;
+	right: 10px;
+	z-index:1;
+	border-radius: 10px;
+	background: #AAA;
+	display:flex;
+	flex-direction:row;
+	align-items:stretch;
+	justify-content: stretch;
+	overflow: hidden;
+}
+
+.dark_mode #content {
+	background: #444;
+}
+
+#content>div {
+	flex-basis: 0;
+	flex-grow: 1;
+	padding: 20px;
+}
+
+#source_container {
+	display:flex;
+	flex-direction:column;
+	align-items:stretch;
+	justify-content: stretch;
+}
+
+#source_container_1 {
+	flex-grow: 1;
+	position:relative;
+}
+
+#source_container_1 > textarea{
+	position:absolute;
+	top:0px;
+	left:0px;
+	right:0px;
+	bottom:0px;
+	width:100%;
+	height:100%;
+}
+
+#source_parse_btn {
+	background: #70f;
+	border: solid 2px #fff;
+	color:white;
+	font-size: 12pt;
+	padding: 5px 10px;
+	border-radius: 10px;
+	float:right;
+}
+
+#source_parse_btn:hover {
+	background: #80f;
+	border: solid 2px #ccc;
+	border-radius: 10px;
+	color:#999;
+}
+
+#result_main {
+	display:flex;
+	flex-direction:column;
+	align-items:stretch;
+	justify-content: stretch;
+	border-radius:10px;
+}
+
+#result_container{
+	position:absolute;
+	top:100px;
+	left:0px;
+	right:0px;
+	bottom:0px;
+	width:100%;
+	height:100%;
+}
+
+#result_ccontainer {
+	overflow: hidden auto;
+	flex-grow: 1;
+	position:relative;
+}
+
+#result_header {
+	font-size: 20pt;
+	width:100%;
+}
+
+.ch_item_container {
+	position:relative;
+	height:80px;
+	background: rgba(255,255,255,0.0);
+}
+
+.ch_item_container:hover {
+	background: rgba(255,255,255,0.25);
+}
+
+.ch_item_container.ch_warning {
+	background: rgba(255,255,0,0.25);
+}
+
+.ch_item_container.ch_warning:hover {
+	background: rgba(255,255,128,0.25);
+}
+
+.ch_item_container.ch_error {
+	background: rgba(255,0,0,0.25);
+}
+
+.ch_item_container.ch_error:hover {
+	background: rgba(255,0,0,0.50);
+}
+
+.ch_item_container .ch_item_thumb {
+	position:absolute;
+	background: #000;
+	width: 112px;
+	height: 72px;
+	top:4px;
+	left:20px;
+}
+
+.ch_item_container .ch_item_title {
+	position:absolute;
+	font-size:16pt;
+	top:0px;
+	left:150px;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+}
+
+.ch_item_container .ch_item_time {
+	position:absolute;
+	font-size:13pt;
+	top:35px;
+	left:150px;
+	color:#3af;
+	background: rgba(0,30,255,0.25);
+	padding: 0px 10px;
+	border-radius: 5px;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+}
+
+.ch_item_container .ch_item_error {
+	position:absolute;
+	font-size:13pt;
+	top:35px;
+	right:10px;
+	padding: 0px 5px;
+	border-radius: 10px;
+}
+
+.ch_item_container.ch_warning .ch_item_error {
+	color: #ff0;
+}
+
+.ch_item_container.ch_error .ch_item_error {
+	color: #f00;
+}
+
+#tab_chapter_close {
+	display: none;
+	float: right;
+	background: #f00;
+	color: #fff;
+	font-size: 12pt;
+	border-radius: 10px;
+	border:solid 2px #fff;
+}
+
+@media only screen and (max-width: 768px){
+	
+	#tab_chapter_close {
+		display: block;
+	}
+	
+	#content>div {
+		position: absolute;
+		top:0px;
+		left:0px;
+		right:0px;
+		bottom:0px;
+		padding: 20px;
+		transition: all linear 0.5s;
+		opacity: 1;
+	}
+	
+	#content > .tab_hidden {
+		visibility:hidden;
+		transform: translateX(-100px);
+		opacity: 0;
+	}
+}
